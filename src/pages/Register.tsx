@@ -223,7 +223,9 @@ const Register = () => {
 };
 
 // ---- Mock API ----
-async function fakeRegister(data: { email: string }): Promise<{ status: number }> {
+async function fakeRegister(data: {
+  fullName: string; email: string; password: string; country: string; phone: string;
+}): Promise<{ status: number }> {
   await new Promise((r) => setTimeout(r, 700));
   if (data.email.toLowerCase() === "taken@test.com") return { status: 409 };
   if (data.email.toLowerCase() === "limit@test.com") return { status: 429 };

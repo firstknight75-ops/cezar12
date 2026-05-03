@@ -68,7 +68,91 @@ const SERVICE_INSTRUCTIONS: Record<ServiceType, string> = {
     "Perform an initial business health assessment. Summarise the key financial indicators, identify the top 3 risks, and outline recommended next steps.",
 }
 
-// ─── Anonymiser ───────────────────────────────────────────────────────────────
+// ─── Structured anonymisation ─────────────────────────────────────────────────
+
+export type CompanyData = {
+  company_name?: string
+  company_name_en?: string
+  website_url?: string
+  instagram_url?: string
+  phone?: string
+  social_links?: Record<string, unknown>
+  target_cities?: unknown[]
+  // retained fields
+  industry?: string
+  business_model?: string
+  company_size?: string
+  monthly_marketing_budget?: number | string
+  target_monthly_revenue?: number | string
+  brand_positioning?: string
+  brand_voice_tone?: string
+  price_range?: string
+  [key: string]: unknown
+}
+
+export type ProjectData = {
+  domain?: string
+  domain_data?: CompanyData
+  [key: string]: unknown
+}
+
+/** Fields always stripped from AI prompt context. */
+const STRIP_COMPANY_KEYS = new Set([
+  "company_name",
+  "company_name_en",
+  "website_url",
+  "instagram_url",
+  "phone",
+  "social_links",
+  "target_cities",
+  "logo_url",
+  "email",
+])
+
+/**
+ * Returns a sanitised copy of company/project data safe to include in AI
+ * prompts. Identifying values are removed; financial and strategic fields
+ * are kept. `company_name` is replaced with "the business" in string values.
+ */
+export function anonymizeForAI(
+  companyData: CompanyData,
+  projectData?: ProjectData,
+): Record<string, unknown> {
+  const sanitized: Record<string, unknown> = {}
+
+  for (const [key, value] of Object.entries(companyData)) {
+    if (STRIP_COMPANY_KEYS.has(key)) continue
+    sanitized[key] = value
+  }
+
+  // If project carries a domain_data nest, sanitize it too
+  if (projectData?.domain_data) {
+    sanitized.domain_data = anonymizeForAI(projectData.domain_data)
+  }
+
+  return sanitized
+}
+
+/**
+ * Replaces all occurrences of a company name (both AR and EN variants) with
+ * "the business" in a prompt string. Complements `anonymizeForAI` for cases
+ * where the name appears in free-text fields that were included before
+ * anonymisation.
+ */
+export function replaceCompanyName(
+  text: string,
+  companyData: Pick<CompanyData, "company_name" | "company_name_en">,
+): string {
+  let result = text
+  for (const name of [companyData.company_name, companyData.company_name_en]) {
+    if (name?.trim()) {
+      result = result.replaceAll(name, "the business")
+    }
+  }
+  return result
+}
+
+// ─── Anonymiser (string-level) ────────────────────────────────────────────────
 
 /**
  * Strips identifying values from a prompt string before sending to any AI

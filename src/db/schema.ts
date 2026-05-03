@@ -203,6 +203,31 @@ export const subscriptions = pgTable("subscriptions", {
     .defaultNow(),
 });
 
+export const addonPurchases = pgTable(
+  "addon_purchases",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    subscriptionId: uuid("subscription_id")
+      .notNull()
+      .references(() => subscriptions.id, { onDelete: "cascade" }),
+    packageType: varchar("package_type", { length: 20 }).notNull(),
+    tokens: integer("tokens").notNull(),
+    price: numeric("price", { precision: 8, scale: 2 }).notNull(),
+    tokensRemaining: integer("tokens_remaining").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("addon_purchases_sub_id_idx").on(t.subscriptionId),
+    index("addon_purchases_expires_at_idx").on(t.expiresAt),
+  ]
+);
+
 export const projects = pgTable(
   "projects",
   {
@@ -339,10 +364,19 @@ export const companiesRelations = relations(companies, ({ one }) => ({
   user: one(users, { fields: [companies.userId], references: [users.id] }),
 }));
 
-export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
+export const subscriptionsRelations = relations(subscriptions, ({ one, many }) => ({
   user: one(users, {
     fields: [subscriptions.userId],
     references: [users.id],
+  }),
+  addonPurchases: many(addonPurchases),
+}));
+
+export const addonPurchasesRelations = relations(addonPurchases, ({ one }) => ({
+  user: one(users, { fields: [addonPurchases.userId], references: [users.id] }),
+  subscription: one(subscriptions, {
+    fields: [addonPurchases.subscriptionId],
+    references: [subscriptions.id],
   }),
 }));
 

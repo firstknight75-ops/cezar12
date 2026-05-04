@@ -1,7 +1,5 @@
-'use client';
-
 import { useAuthStore } from '@/store/useAuthStore';
-import { PLAN_CONFIG } from '@cezar12/shared/constants';
+import { PLAN_CONFIG } from '@cezar12/shared';
 import type { SubscriptionPlan } from '@cezar12/shared';
 
 interface Permissions {
@@ -14,13 +12,11 @@ interface Permissions {
   plan: SubscriptionPlan | null;
   tokensRemaining: number;
 
-  // Service-specific permissions
   canUseMarketResearch: boolean;
   canUseAdCampaigns: boolean;
   canUseSEO: boolean;
   canUseLeadGeneration: boolean;
 
-  // Token checks
   hasEnoughTokens: (cost: number) => boolean;
 }
 
@@ -53,7 +49,6 @@ export function usePermissions(): Permissions {
     plan,
     tokensRemaining,
 
-    // Advanced services (Gold+)
     canUseMarketResearch: isGoldOrHigher,
     canUseAdCampaigns: isGoldOrHigher,
     canUseSEO: isGoldOrHigher,

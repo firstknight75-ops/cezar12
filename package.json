@@ -1,7 +1,7 @@
 {
   "name": "cezar12",
-  "private": true,
   "version": "0.0.1",
+  "private": true,
   "packageManager": "pnpm@9.15.0",
   "scripts": {
     "dev": "pnpm --filter @cezar12/web run dev",

@@ -3,27 +3,35 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
+    "dev": "tsx watch src/worker.ts",
+    "build": "tsup src/worker.ts --format esm",
+    "start": "node dist/worker.js",
     "type-check": "tsc --noEmit",
-    "lint": "eslint src/"
+    "test": "vitest run",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@cezar12/shared": "workspace:*",
-    "@anthropic-ai/sdk": "^0.92.0",
-    "bullmq": "^5.76.5",
-    "drizzle-orm": "^0.45.2",
-    "ioredis": "^5.6.1",
-    "openai": "^6.35.0",
-    "postgres": "^3.4.9",
-    "zod": "^3.25.76"
+    "bullmq": "^5.7.0",
+    "ioredis": "^5.3.2",
+    "drizzle-orm": "^0.31.0",
+    "pg": "^8.11.5",
+    "openai": "^4.52.0",
+    "@anthropic-ai/sdk": "^0.26.0",
+    "zod": "^3.23.0",
+    "pino": "^9.2.0",
+    "pino-pretty": "^11.2.1",
+    "node-cron": "^3.0.3",
+    "date-fns": "^3.6.0",
+    "dotenv": "^16.4.0"
   },
   "devDependencies": {
-    "@types/node": "^22.16.5",
-    "tsx": "^4.19.4",
-    "typescript": "^5.8.3"
+    "@types/node": "^20.14.0",
+    "@types/pg": "^8.11.6",
+    "tsx": "^4.11.0",
+    "tsup": "^8.1.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
   }
 }

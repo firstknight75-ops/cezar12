@@ -1,5 +1,8 @@
 # Cezar 12 — Monorepo Guide for Claude
 
+> **Last updated after build audit — May 2026**
+> Read this file fully before touching any code. It contains hard-won fixes.
+
 ## Overview
 
 Cezar 12 is a Gulf-region bilingual (AR/EN) business intelligence SaaS. It
@@ -29,26 +32,65 @@ cezar12/
 | `@cezar12/worker` | BullMQ workers — AI job processing (Anthropic + OpenAI) | BullMQ, ioredis, @anthropic-ai/sdk, openai |
 | `@cezar12/shared` | DB schema (Drizzle), shared TS types, queue constants | drizzle-orm, zod |
 
+## ⚠️ Known Issues & Fixes (DO NOT REVERT)
+
+### 1. `@radix-ui/react-badge` does not exist on npm
+This package was mistakenly added and blocked all installs. It has been **removed**.
+Use the `badge.tsx` shadcn component in `packages/web/src/components/ui/badge.tsx` instead.
+Never add `@radix-ui/react-badge` to any package.json.
+
+### 2. `next` is not used — this is a Vite React SPA
+`next` was in web/package.json by mistake and has been removed.
+The web package uses **Vite 5 + React 18**, not Next.js.
+Do not import from `next/*`, `next/server`, `next/navigation`, etc. in any web package file.
+
+### 3. `middleware.ts` is a Next.js convention — not active in Vite
+`packages/web/src/middleware.ts` previously imported `next/server` which broke the build.
+It has been rewritten as a plain constants file (route lists only).
+Route protection is handled **client-side** via the `useAuth` hook + `ProtectedRoute` component.
+
+### 4. `lovable-tagger` import is wrapped in try/catch in vite.config.ts
+The plugin is optional and only loaded in dev. Do not make it a hard `import` at the top level.
+
+### 5. pnpm install must use `--ignore-scripts`
+`bcrypt` in the api package fails to compile native bindings in this environment.
+Always run: `pnpm install --ignore-scripts`
+bcrypt works fine at runtime on a real Linux server — this is a dev-environment build tool issue only.
+
+### 6. `@tanstack/query-core` resolution
+Fixed via `optimizeDeps.include` and `resolve.dedupe` in `vite.config.ts`. Do not remove these.
+
+---
+
 ## Common Commands
 
 ```bash
+# INSTALL — always use --ignore-scripts (bcrypt native build fails in dev)
+pnpm install --ignore-scripts
+
 # Start everything
 pnpm dev              # all packages in parallel via turbo
 
 # Individual packages
 pnpm --filter @cezar12/api dev
 pnpm --filter @cezar12/worker dev
-pnpm --filter @cezar12/web dev
+pnpm --filter @cezar12/web dev      # serves on port 8080
+
+# Build & verify web (run this after any dependency change)
+cd packages/web && npx vite build   # must complete with ✓ built
+
+# Type-check (zero errors expected on web package)
+pnpm --filter @cezar12/web type-check
 
 # Tests
 pnpm test             # all packages
 pnpm --filter @cezar12/web test
 
-# Type-check
-pnpm type-check       # all packages
-
 # Infrastructure
-docker compose up -d  # start postgres, redis, minio
+docker compose up -d  # start postgres (5432), redis (6379), minio (9000)
+
+# Database
+npx drizzle-kit push  # push schema changes to live DB (run from repo root)
 ```
 
 ## Design System (packages/web)

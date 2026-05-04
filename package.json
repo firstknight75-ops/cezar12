@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "pnpm --filter @cezar12/web dev",
     "build": "turbo build",
     "test": "turbo test",
     "test:unit": "turbo test:unit",

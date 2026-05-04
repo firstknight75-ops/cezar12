@@ -3,14 +3,14 @@ import axios, {
   type AxiosError,
   type InternalAxiosRequestConfig,
 } from 'axios';
-import type { ApiErrorResponse, ApiSuccessResponse } from '@cezar12/shared';
+import type { ApiErrorResponse, ApiSuccessResponse } from '@/lib/shared';
 
 // ═══════════════════════════════════════════════════════════
 // AXIOS INSTANCE
 // ═══════════════════════════════════════════════════════════
 
 export const api: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001',
+  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:3001',
   timeout: 30_000,
   headers: {
     'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ api.interceptors.response.use(
 
         const response = await axios.post<
           ApiSuccessResponse<{ access_token: string; refresh_token: string }>
-        >(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`, { refresh_token: refreshToken });
+        >(`${import.meta.env.VITE_API_URL}/auth/refresh`, { refresh_token: refreshToken });
 
         const { access_token, refresh_token } = response.data.data;
         localStorage.setItem('access_token', access_token);

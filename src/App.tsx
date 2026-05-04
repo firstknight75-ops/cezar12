@@ -11,6 +11,9 @@ import ForgotPassword from "./pages/ForgotPassword.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import CompanySetup from "./pages/CompanySetup.tsx";
 import Plans from "./pages/Plans.tsx";
+import Dashboard from "./pages/Dashboard.tsx";
+import ProjectCreate from "./pages/ProjectCreate.tsx";
+import RestaurantDashboard from "./pages/RestaurantDashboard.tsx";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +31,9 @@ const App = () => (
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/setup" element={<CompanySetup />} />
           <Route path="/plans" element={<Plans />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/projects/new" element={<ProjectCreate />} />
+          <Route path="/restaurant" element={<RestaurantDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

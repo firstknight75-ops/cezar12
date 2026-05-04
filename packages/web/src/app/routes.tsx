@@ -1,7 +1,8 @@
 import { Navigate } from "react-router-dom"
-import { lazy, Suspense } from "react"
+import { lazy, Suspense, type ReactNode } from "react"
 
-const Loader = () => <div className="p-6 text-center">Loading...</div>
+const fallback = <div className="p-6 text-center">Loading...</div>
+const wrap = (el: ReactNode) => <Suspense fallback={fallback}>{el}</Suspense>
 
 const Index = lazy(() => import("../pages/Index"))
 const Login = lazy(() => import("../pages/Login"))
@@ -13,18 +14,17 @@ const Plans = lazy(() => import("../pages/Plans"))
 const Dashboard = lazy(() => import("../pages/Dashboard"))
 const ProjectCreate = lazy(() => import("../pages/ProjectCreate"))
 const RestaurantDashboard = lazy(() => import("../pages/RestaurantDashboard"))
-const NotFound = lazy(() => import("../pages/NotFound"))
 
 export const routes = [
-  { path: "/", element: <Suspense fallback={<Loader />}><Index /></Suspense> },
-  { path: "/login", element: <Suspense fallback={<Loader />}><Login /></Suspense> },
-  { path: "/register", element: <Suspense fallback={<Loader />}><Register /></Suspense> },
-  { path: "/forgot-password", element: <Suspense fallback={<Loader />}><ForgotPassword /></Suspense> },
-  { path: "/reset-password", element: <Suspense fallback={<Loader />}><ResetPassword /></Suspense> },
-  { path: "/setup", element: <Suspense fallback={<Loader />}><CompanySetup /></Suspense> },
-  { path: "/plans", element: <Suspense fallback={<Loader />}><Plans /></Suspense> },
-  { path: "/dashboard", element: <Suspense fallback={<Loader />}><Dashboard /></Suspense> },
-  { path: "/projects/new", element: <Suspense fallback={<Loader />}><ProjectCreate /></Suspense> },
-  { path: "/restaurant", element: <Suspense fallback={<Loader />}><RestaurantDashboard /></Suspense> },
-  { path: "*", element: <Navigate to="/404" replace />, },
+  { path: "/", element: wrap(<Index />) },
+  { path: "/login", element: wrap(<Login />) },
+  { path: "/register", element: wrap(<Register />) },
+  { path: "/forgot-password", element: wrap(<ForgotPassword />) },
+  { path: "/reset-password", element: wrap(<ResetPassword />) },
+  { path: "/setup", element: wrap(<CompanySetup />) },
+  { path: "/plans", element: wrap(<Plans />) },
+  { path: "/dashboard", element: wrap(<Dashboard />) },
+  { path: "/projects/new", element: wrap(<ProjectCreate />) },
+  { path: "/restaurant", element: wrap(<RestaurantDashboard />) },
+  { path: "*", element: <Navigate to="/404" replace /> },
 ]

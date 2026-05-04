@@ -1,6 +1,6 @@
 import { useAuthStore } from '@/store/useAuthStore';
-import { PLAN_CONFIG } from '@cezar12/shared';
-import type { SubscriptionPlan } from '@cezar12/shared';
+import { PLAN_CONFIG } from '@/lib/shared';
+import type { SubscriptionPlan } from '@/lib/shared';
 
 interface Permissions {
   canUseKitchenIntelligence: boolean;

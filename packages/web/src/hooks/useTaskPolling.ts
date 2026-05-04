@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { apiGet } from '@/lib/api';
-import type { ExecutionStatus, TaskStatus } from '@cezar12/shared';
+import type { ExecutionStatus, TaskStatus } from '@/lib/shared';
 
 // ═══════════════════════════════════════════════════════════
 // TYPES

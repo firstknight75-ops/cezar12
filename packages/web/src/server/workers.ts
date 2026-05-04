@@ -100,7 +100,7 @@ function createWorker(queueName: QueueName, db: Db, redis: Redis): Worker {
       connection: getConnection(),
       concurrency: QUEUE_CONCURRENCY[queueName],
       settings: {
-        backoffStrategies: { custom: backoffStrategy },
+        backoffStrategy,
       },
     },
   )
@@ -135,7 +135,8 @@ const QUEUE_NAMES: QueueName[] = [
 ]
 
 export function startWorkers(db: Db): { workers: Worker[]; redis: Redis } {
-  const redis = new Redis({ ...getConnection() as object, lazyConnect: false } as ConstructorParameters<typeof Redis>[0])
+  const { host, port, password, maxRetriesPerRequest } = getConnection() as { host: string; port: number; password?: string; maxRetriesPerRequest: null }
+  const redis = new Redis({ host, port, password, maxRetriesPerRequest })
 
   const workers = QUEUE_NAMES.map((name) => {
     const w = createWorker(name, db, redis)

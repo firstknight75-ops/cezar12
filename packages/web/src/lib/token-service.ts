@@ -385,7 +385,7 @@ export class TokenService {
 
   // ── Internal helpers ───────────────────────────────────────────────────────
 
-  private async requireActiveSubscription(userId: string, tx?: Db) {
+  private async requireActiveSubscription(userId: string, tx?: Parameters<Db['transaction']>[0] extends (tx: infer T) => unknown ? T : never) {
     const db = tx ?? this.db
     const [sub] = await (db as Db)
       .select()

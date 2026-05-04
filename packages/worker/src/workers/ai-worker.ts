@@ -28,9 +28,6 @@ function anonymizePrompt(
   if (values.company_name?.trim()) {
     out = out.replaceAll(values.company_name, "the business")
   }
-  if (values.company_name?.trim()) {
-    out = out.replaceAll(values.company_name, "the business")
-  }
   if (values.phone?.trim()) {
     out = out.replaceAll(values.phone, "[REDACTED]")
   }

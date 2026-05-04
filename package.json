@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "cd packages/web && node_modules/.bin/vite",
     "build": "turbo build",
     "test": "turbo test",
     "test:unit": "turbo test:unit",

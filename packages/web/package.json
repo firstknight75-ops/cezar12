@@ -2,13 +2,14 @@
   "name": "@cezar12/web",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "dev": "vite",
+    "build": "vite build",
+    "start": "vite preview",
+    "lint": "eslint .",
     "type-check": "tsc --noEmit",
-    "clean": "rm -rf .next"
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@cezar12/shared": "workspace:*",

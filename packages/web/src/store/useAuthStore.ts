@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { SubscriptionPlan, TokenBalance } from '@cezar12/shared';
+import type { SubscriptionPlan, TokenBalance } from '@/lib/shared';
 
 // ═══════════════════════════════════════════════════════════
 // TYPES

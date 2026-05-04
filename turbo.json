@@ -5,18 +5,27 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", "!dist/cache/**"]
+      "outputs": ["dist/**", ".next/**", "!dist/cache/**", "!.next/cache/**"]
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
     "test": {
-      "inputs": ["$TURBO_DEFAULT$", ".env.test"]
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env.test"],
+      "outputs": ["coverage/**"]
     },
-    "lint": {},
+    "test:unit": {
+      "cache": false
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$"]
+    },
     "type-check": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$"]
     },
     "clean": {
       "cache": false

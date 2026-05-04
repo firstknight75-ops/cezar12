@@ -69,7 +69,7 @@ export default function Step2DigitalPresence({ data, setField, lang }: Props) {
             <div
               key={idx}
               className={`flex-1 h-1.5 rounded-full transition-all duration-300 ${
-                !!(data[key] as string) ? "bg-oxblood" : "bg-ink/12"
+                (data[key] as string) ? "bg-oxblood" : "bg-ink/12"
               }`}
             />
           ))}

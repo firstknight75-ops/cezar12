@@ -372,7 +372,7 @@ describe("slidingWindowCount", () => {
 
   it("rateLimiter returns 429 when limit exceeded", async () => {
     const { rateLimiter } = await import("../server/middleware/rate-limit")
-    let calls = 0
+    const calls = 0
     const mockRedis = {
       pipeline: () => ({
         zremrangebyscore: vi.fn().mockReturnThis(),

@@ -321,6 +321,7 @@ let _instance: ServiceOrchestrator | null = null
 export function getServiceOrchestrator(db?: Db): ServiceOrchestrator {
   if (db) return new ServiceOrchestrator(db)
   if (!_instance) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { db: realDb } = require("@/db/client") as { db: Db }
     _instance = new ServiceOrchestrator(realDb)
   }

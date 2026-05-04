@@ -123,6 +123,15 @@ export const SERVICES: ServiceEntry[] = [
     domains: ["restaurant"],
     estimatedSeconds: 15,
   },
+  {
+    key: "promotion_optimizer",
+    label: "Promotion Optimizer",
+    labelAr: "مُحسِّن العروض",
+    description: "Discount & bundle strategies to boost covers and check size",
+    cost: { silver: null, gold: 35, platinum: 20 },
+    domains: ["restaurant"],
+    estimatedSeconds: 15,
+  },
 ]
 
 export function getCost(key: string, plan: PlanName): number | null {

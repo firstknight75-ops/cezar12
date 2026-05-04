@@ -414,6 +414,7 @@ export function getTokenService(db?: Db): TokenService {
   if (!_instance) {
     // Dynamically import to avoid loading the DB client at module parse time
     // (keeps unit tests fast — they pass their own mock db via the argument)
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { db: realDb } = require("@/db/client") as { db: Db }
     _instance = new TokenService(realDb)
   }

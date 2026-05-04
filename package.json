@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "pnpm --filter @cezar12/web dev",
+    "dev": "cd packages/web && vite",
     "build": "turbo build",
     "test": "turbo test",
     "test:unit": "turbo test:unit",

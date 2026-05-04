@@ -1,0 +1,29 @@
+{
+  "name": "@cezar12/worker",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "@cezar12/shared": "workspace:*",
+    "@anthropic-ai/sdk": "^0.92.0",
+    "bullmq": "^5.76.5",
+    "drizzle-orm": "^0.45.2",
+    "ioredis": "^5.6.1",
+    "openai": "^6.35.0",
+    "postgres": "^3.4.9",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22.16.5",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "@cezar12/shared",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./db/schema": {
+      "types": "./src/db/schema.ts",
+      "import": "./src/db/schema.ts"
+    },
+    "./types/*": {
+      "types": "./src/types/*.ts",
+      "import": "./src/types/*.ts"
+    }
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.2",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22.16.5",
+    "typescript": "^5.8.3"
+  }
+}

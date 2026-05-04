@@ -1,0 +1,61 @@
+# Cezar 12 — Cursor Rules
+
+## Monorepo
+- pnpm workspaces: `packages/web`, `packages/api`, `packages/worker`, `packages/shared`
+- Turbo orchestrates builds: run `pnpm dev` from root, not from individual packages
+- Cross-package imports use workspace aliases: `@cezar12/shared`, `@cezar12/api`, etc.
+- Schema changes go in `packages/shared/src/db/schema.ts` — never duplicate
+
+## TypeScript
+- Strict mode is on in `packages/api`, `packages/worker`, `packages/shared`
+- `packages/web` uses relaxed settings for legacy compatibility; new files should still be strict
+- Prefer `type` over `interface` for pure type aliases
+- Use `satisfies` operator instead of `as` casts where possible
+
+## Backend (packages/api)
+- Fastify v5 — always `await` plugin registration
+- Route files export `FastifyPluginAsync` — never use callbacks
+- Input validation with Zod (via `fastify-type-provider-zod` or manual schema)
+- All routes require auth unless explicitly marked public with `{ public: true }`
+- Return consistent shapes: `{ data: T }` on success, `{ error: string, code?: string }` on failure
+
+## Worker (packages/worker)
+- BullMQ workers run with `concurrency` set per queue (see `src/queues.ts`)
+- Always acquire `aiSemaphore` before calling any AI API
+- On failure after 3 retries, update `ai_jobs.status = "failed"`
+- Geometric backoff: `[1_000, 4_000, 16_000]` ms
+
+## Database
+- Drizzle ORM only — never write raw SQL unless absolutely necessary
+- Prefer `.select().from().where()` over `db.query.*` for explicit column selection
+- All mutations should be in transactions where atomicity matters
+- Never expose `password_hash` in API responses — always exclude it
+
+## Frontend (packages/web)
+- No `<form>` elements — all wizard/form state is pure React state
+- All AI output is rendered client-side via `AIServiceCard` (5 states)
+- Financial engine (`lib/financial-engine.ts`) runs synchronously client-side
+- RTL support: use `dir="rtl"` on Arabic text, use `start`/`end` for logical margins
+
+## Design System
+- Use CSS variable tokens (`hsl(var(--primary))`) not raw hex values
+- Use `cn()` from `@/lib/utils` for all className merging
+- Never use Tailwind `#` color values — only predefined palette tokens
+- oxblood / cream / ember / ink are the 4 brand colors
+
+## Security
+- Never log tokens, API keys, or JWT contents
+- File uploads must be validated via `validateUpload()` in `packages/api`
+- Rate limiting is applied at the Fastify plugin level — don't re-implement
+- Admin routes must always go through `adminGuard` plugin
+
+## Arabic / i18n
+- Arabic text always uses `dir="rtl"` and `font-mono-ed` for numeric values
+- Disclaimer injection is mandatory for all AI output — never skip
+- Arabic text goes second (after English) in bilingual components
+
+## Testing
+- Unit tests in `__tests__/` or `src/test/` using Vitest
+- Mock the DB with a typed mock object — never use a real test DB
+- Security middleware tests should always use `// @vitest-environment node` workaround if needed
+- Aim for tests on all public API methods of service classes

@@ -1,11 +1,8 @@
 {
   "name": "cezar12",
-  "version": "0.0.1",
   "private": true,
-  "packageManager": "pnpm@9.0.0",
-  "workspaces": [
-    "packages/*"
-  ],
+  "version": "0.0.1",
+  "packageManager": "pnpm@9.15.0",
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
@@ -13,7 +10,7 @@
     "test:unit": "turbo test:unit",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
-    "clean": "turbo clean && rm -rf node_modules",
+    "clean": "turbo clean && find . -name 'node_modules' -type d -prune -exec rm -rf {} + 2>/dev/null || true",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx packages/api/src/db/migrate.ts",
     "db:studio": "drizzle-kit studio",
@@ -22,9 +19,10 @@
     "docker:clean": "docker-compose down -v"
   },
   "devDependencies": {
-    "turbo": "^2.0.0",
-    "typescript": "^5.4.0",
-    "drizzle-kit": "^0.22.0",
+    "turbo": "^2.3.3",
+    "typescript": "^5.8.3",
+    "prettier": "^3.4.2",
+    "drizzle-kit": "^0.31.0",
     "tsx": "^4.11.0",
     "dotenv": "^16.4.0"
   },

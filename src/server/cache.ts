@@ -100,6 +100,7 @@ let _cache: RedisCache | null = null
 export function getCache(redis?: Redis): RedisCache {
   if (redis) return new RedisCache(redis)
   if (!_cache) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { Redis } = require("ioredis") as typeof import("ioredis")
     const r = new Redis({
       host: process.env.REDIS_HOST ?? "localhost",

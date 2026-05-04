@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 export type BillingCycle = "monthly" | "quarterly" | "annual"
 export type PlanName = "silver" | "gold" | "platinum"
 
@@ -102,8 +104,6 @@ export const CYCLE_LABELS_AR: Record<BillingCycle, string> = {
   quarterly: "ربع سنوي",
   annual: "سنوي",
 }
----
-import { useState } from "react"
 
 export type TokenState = {
   planUsed: number
@@ -142,7 +142,6 @@ export function useTokens(): UseTokensReturn {
   const isLow = totalRemaining < 50
 
   const purchaseAddon = async (packageTokens: number, _packagePrice: number) => {
-    // POST /api/tokens/purchase — mocked
     await new Promise<void>((res) => setTimeout(res, 800))
     const next = { ...tokens, addonBalance: tokens.addonBalance + packageTokens }
     setTokens(next)

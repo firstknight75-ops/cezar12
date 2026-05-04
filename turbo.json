@@ -29,6 +29,11 @@
     },
     "clean": {
       "cache": false
+    },
+    "rebuild": {
+      "dependsOn": ["clean", "^build"],
+      "outputs": ["dist/**", ".next/**", "!dist/cache/**", "!.next/cache/**"],
+      "cache": false
     }
   }
 }

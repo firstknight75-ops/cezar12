@@ -2,31 +2,31 @@
   "name": "@cezar12/shared",
   "version": "0.0.1",
   "private": true,
-  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "import": "./src/index.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
-    "./db/schema": {
-      "types": "./src/db/schema.ts",
-      "import": "./src/db/schema.ts"
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/types/index.js"
     },
-    "./types/*": {
-      "types": "./src/types/*.ts",
-      "import": "./src/types/*.ts"
+    "./constants": {
+      "types": "./dist/constants/index.d.ts",
+      "import": "./dist/constants/index.js"
     }
   },
   "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
     "type-check": "tsc --noEmit",
-    "lint": "eslint src/"
-  },
-  "dependencies": {
-    "drizzle-orm": "^0.45.2",
-    "zod": "^3.25.76"
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "@types/node": "^22.16.5",
-    "typescript": "^5.8.3"
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0"
   }
 }

@@ -24,13 +24,13 @@ interface RefreshBody {
   refresh_token: string
 }
 
-function signTokens(app: FastifyInstance, userId: string, role: string) {
+function signTokens(app: FastifyInstance, userId: string, role: "user" | "admin" | "support") {
   const accessToken = app.jwt.sign(
-    { sub: userId, id: userId, role },
+    { sub: userId, role },
     { expiresIn: "1h" }
   )
   const refreshToken = app.jwt.sign(
-    { sub: userId, id: userId, role, type: "refresh" },
+    { sub: userId, role, type: "refresh" },
     { expiresIn: "30d" }
   )
   return { accessToken, refreshToken }
@@ -190,7 +190,7 @@ export async function authRoutes(app: FastifyInstance) {
         })
       }
 
-      let payload: { sub: string; id?: string; role: string; type?: string }
+      let payload: { sub: string; role: "user" | "admin" | "support"; type?: string }
       try {
         payload = app.jwt.verify(refresh_token) as typeof payload
       } catch {
@@ -207,7 +207,7 @@ export async function authRoutes(app: FastifyInstance) {
         })
       }
 
-      const userId = payload.sub ?? payload.id ?? ""
+      const userId = payload.sub
       const { accessToken, refreshToken } = signTokens(app, userId, payload.role)
 
       return reply.status(200).send({

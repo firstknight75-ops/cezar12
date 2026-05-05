@@ -5,7 +5,7 @@ import { auditLog } from "@cezar12/shared/db/schema"
 
 declare module "@fastify/jwt" {
   interface FastifyJWT {
-    payload: { sub: string; role: "user" | "admin" | "support" }
+    payload: { sub: string; role: "user" | "admin" | "support"; type?: string }
     user: { id: string; role: "user" | "admin" | "support" }
   }
 }
@@ -25,11 +25,6 @@ export const authPlugin: FastifyPluginAsync = fp(async (app) => {
 
     try {
       await req.jwtVerify()
-      const payload = req.user as { sub?: string; id?: string; role: "user" | "admin" | "support" }
-      // Normalize: @fastify/jwt puts decoded payload on req.user; sub → id
-      if (!req.user.id && (payload.sub || payload.id)) {
-        req.user = { id: payload.sub ?? payload.id ?? '', role: payload.role }
-      }
       req.readOnly = req.user.role === "support"
     } catch {
       return reply.status(401).send({ error: "Invalid or expired token" })

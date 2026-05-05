@@ -55,6 +55,10 @@ export async function buildServer(): Promise<FastifyInstance> {
   await server.register(jwt, {
     secret: process.env.JWT_SECRET ?? 'dev-secret-change-in-production',
     sign: { expiresIn: '1h' },
+    formatUser: (payload: { sub: string; role: 'user' | 'admin' | 'support' }) => ({
+      id: payload.sub,
+      role: payload.role,
+    }),
   });
 
   await server.register(rateLimit, {

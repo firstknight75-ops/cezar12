@@ -11,8 +11,8 @@ import {
   index,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { users } from './users';
-import { projects } from './projects';
+import { users } from './users.js';
+import { projects } from './projects.js';
 
 // ═══════════════════════════════════════════════════════════
 // ASSETS TABLE

@@ -1,8 +1,12 @@
-import { FastifyInstance } from "fastify"
-import authRoutes from "./auth.route"
-import userRoutes from "./user.route"
+import type { FastifyInstance } from "fastify"
+import { projectsRoutes } from "./projects.js"
+import { servicesRoutes } from "./services.js"
+import { tokensRoutes } from "./tokens.js"
+import { adminRoutes } from "./admin.js"
 
 export default async function routes(app: FastifyInstance) {
-  app.register(authRoutes, { prefix: "/auth" })
-  app.register(userRoutes, { prefix: "/users" })
+  app.register(projectsRoutes, { prefix: "/projects" })
+  app.register(servicesRoutes, { prefix: "/services" })
+  app.register(tokensRoutes, { prefix: "/tokens" })
+  app.register(adminRoutes, { prefix: "/admin" })
 }

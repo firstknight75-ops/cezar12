@@ -3,7 +3,7 @@ import { z } from "zod"
 import { eq, and, sql } from "drizzle-orm"
 import { db } from "../db/client.js"
 import { TokenService } from "../lib/token-service.js"
-import { subscriptions, addonPurchases } from "@cezar12/shared"
+import { subscriptions, addonPurchases } from "@cezar12/shared/db/schema"
 
 const PurchaseBody = z.object({
   packageType: z.enum(["starter", "growth", "scale"]),

@@ -4,7 +4,7 @@ import {
   subscriptions,
   addonPurchases,
   tokenTransactions,
-} from "@cezar12/shared"
+} from "@cezar12/shared/db/schema"
 import { SERVICE_COSTS } from "@cezar12/shared"
 import type { PlanName } from "@cezar12/shared"
 

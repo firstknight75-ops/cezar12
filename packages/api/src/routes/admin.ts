@@ -2,7 +2,7 @@ import type { FastifyPluginAsync } from "fastify"
 import { z } from "zod"
 import { eq, desc, sql, lt } from "drizzle-orm"
 import { db } from "../db/client.js"
-import { users, subscriptions, auditLog } from "@cezar12/shared"
+import { users, subscriptions, auditLog } from "@cezar12/shared/db/schema"
 import { adminGuard } from "../plugins/auth.js"
 
 export const adminRoutes: FastifyPluginAsync = async (app) => {

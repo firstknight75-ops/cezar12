@@ -2,6 +2,7 @@
   "name": "@cezar12/shared",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -17,7 +18,15 @@
     "./constants": {
       "types": "./dist/constants/index.d.ts",
       "import": "./dist/constants/index.js"
+    },
+    "./db/schema": {
+      "types": "./dist/db/schema.d.ts",
+      "import": "./dist/db/schema.js",
+      "require": "./dist/db/schema.cjs"
     }
+  },
+  "peerDependencies": {
+    "drizzle-orm": ">=0.31.0"
   },
   "scripts": {
     "build": "tsup",

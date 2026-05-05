@@ -13,8 +13,8 @@ import {
   index,
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
-import { users } from './users';
-import { projects } from './projects';
+import { users } from './users.js';
+import { projects } from './projects.js';
 
 // ═══════════════════════════════════════════════════════════
 // ADMIN USERS (separate from regular users)

@@ -2,14 +2,14 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 
 // ── Schema Imports ────────────────────────────────────────
-import * as usersSchema from './schema/users';
-import * as subscriptionsSchema from './schema/subscriptions';
-import * as projectsSchema from './schema/projects';
-import * as servicesSchema from './schema/services';
-import * as assetsSchema from './schema/assets';
-import * as restaurantSchema from './schema/restaurant';
-import * as recommendationsSchema from './schema/recommendations';
-import * as adminSchema from './schema/admin';
+import * as usersSchema from './schema/users.js';
+import * as subscriptionsSchema from './schema/subscriptions.js';
+import * as projectsSchema from './schema/projects.js';
+import * as servicesSchema from './schema/services.js';
+import * as assetsSchema from './schema/assets.js';
+import * as restaurantSchema from './schema/restaurant.js';
+import * as recommendationsSchema from './schema/recommendations.js';
+import * as adminSchema from './schema/admin.js';
 
 // ── Merge All Schemas ─────────────────────────────────────
 const schema = {
@@ -71,11 +71,11 @@ export async function closeDatabase(): Promise<void> {
 
 // ── Re-export all schemas for convenience ─────────────────
 export { schema };
-export * from './schema/users';
-export * from './schema/subscriptions';
-export * from './schema/projects';
-export * from './schema/services';
-export * from './schema/assets';
-export * from './schema/restaurant';
-export * from './schema/recommendations';
-export * from './schema/admin';
+export * from './schema/users.js';
+export * from './schema/subscriptions.js';
+export * from './schema/projects.js';
+export * from './schema/services.js';
+export * from './schema/assets.js';
+export * from './schema/restaurant.js';
+export * from './schema/recommendations.js';
+export * from './schema/admin.js';

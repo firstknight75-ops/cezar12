@@ -2,7 +2,7 @@ import type { FastifyPluginAsync } from "fastify"
 import { z } from "zod"
 import { eq, and, isNull } from "drizzle-orm"
 import { db } from "../db/client.js"
-import { projects, ubo } from "@cezar12/shared"
+import { projects, ubo } from "@cezar12/shared/db/schema"
 
 const CreateProjectBody = z.object({
   name: z.string().min(1).max(255),

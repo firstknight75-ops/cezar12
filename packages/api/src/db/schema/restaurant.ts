@@ -13,7 +13,7 @@ import {
   unique,
 } from 'drizzle-orm/pg-core';
 import { relations, sql } from 'drizzle-orm';
-import { projects } from './projects';
+import { projects } from './projects.js';
 
 // ═══════════════════════════════════════════════════════════
 // RESTAURANT SETTINGS

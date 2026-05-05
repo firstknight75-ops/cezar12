@@ -26,6 +26,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --ignore-scripts --frozen-lockfile
 
+      - name: Build shared (required for type resolution in downstream packages)
+        run: pnpm --filter @cezar12/shared build
+
       - name: Type check — shared
         run: pnpm --filter @cezar12/shared type-check
 

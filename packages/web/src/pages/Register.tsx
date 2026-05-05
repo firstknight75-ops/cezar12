@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import AuthShell from "@/components/auth/AuthShell";
 import Field, { inputClass } from "@/components/auth/Field";
 import { Lang, countries, passwordStrength, t, validEmail, validPassword } from "@/lib/auth-i18n";
+import { apiPost } from "@/lib/api";
 
 const Register = () => {
   const [lang, setLang] = useState<Lang>("ar");
@@ -49,19 +50,18 @@ const Register = () => {
     setSubmitting(true);
     setErrors({});
     try {
-      // POST /api/auth/register — mocked
-      const res = await fakeRegister({ fullName, email, password, country, phone });
-      if (res.status === 201) {
-        setSuccess(true);
-      } else if (res.status === 409) {
+      await apiPost("/auth/register", { fullName, email, password, country, phone });
+      setSuccess(true);
+    } catch (err: unknown) {
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      const code = (err as { response?: { data?: { error?: { code?: string } } } })?.response?.data?.error?.code;
+      if (status === 409 || code === "EMAIL_TAKEN") {
         setErrors({ email: i.errEmailTaken });
-      } else if (res.status === 429) {
+      } else if (status === 429) {
         setErrors({ form: i.err429 });
       } else {
         setErrors({ form: i.errGeneric });
       }
-    } catch {
-      setErrors({ form: i.errGeneric });
     } finally {
       setSubmitting(false);
     }
@@ -222,14 +222,5 @@ const Register = () => {
   );
 };
 
-// ---- Mock API ----
-async function fakeRegister(data: {
-  fullName: string; email: string; password: string; country: string; phone: string;
-}): Promise<{ status: number }> {
-  await new Promise((r) => setTimeout(r, 700));
-  if (data.email.toLowerCase() === "taken@test.com") return { status: 409 };
-  if (data.email.toLowerCase() === "limit@test.com") return { status: 429 };
-  return { status: 201 };
-}
 
 export default Register;

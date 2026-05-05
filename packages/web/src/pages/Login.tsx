@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthShell from "@/components/auth/AuthShell";
 import Field, { inputClass } from "@/components/auth/Field";
 import { Lang, t, validEmail } from "@/lib/auth-i18n";
+import { apiPost } from "@/lib/api";
+import { useAuthStore } from "@/store/useAuthStore";
 
 type LoginError =
   | { kind: "bad" }
@@ -12,9 +14,25 @@ type LoginError =
   | { kind: "generic" }
   | null;
 
+interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    id: string; email: string; fullName: string; countryCode: string;
+    currency: string; preferredLang: string; isVerified: boolean; hasCompanyProfile: boolean;
+  };
+  subscription: {
+    id: string; plan: string; billingCycle: string; status: string;
+    tokensPerCycle: number; tokensRemaining: number; currentPeriodEnd: string;
+  } | null;
+  tokenBalance: { plan: number; addon: number; total: number };
+}
+
 const Login = () => {
   const [lang, setLang] = useState<Lang>("ar");
   const i = t[lang];
+  const navigate = useNavigate();
+  const setAuth = useAuthStore((s) => s.setAuth);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,18 +58,25 @@ const Login = () => {
     setServerErr(null);
     setResendInfo("");
     try {
-      const res = await fakeLogin({ email, password, remember });
-      if (res.status === 200) {
-        // success — would redirect to dashboard
-        setServerErr(null);
-        setResendInfo(lang === "ar" ? "تم تسجيل الدخول بنجاح ✓" : "Signed in successfully ✓");
-      } else if (res.status === 401) setServerErr({ kind: "bad" });
-      else if (res.status === 403) setServerErr({ kind: "unverified" });
-      else if (res.status === 423) setServerErr({ kind: "locked", until: res.until ?? "15:00" });
-      else if (res.status === 429) setServerErr({ kind: "rate" });
+      const data = await apiPost<LoginResponse>("/auth/login", { email, password, remember });
+      setAuth({
+        user: data.user,
+        subscription: data.subscription ?? {
+          id: "", plan: "silver" as const, billingCycle: "monthly", status: "active",
+          tokensPerCycle: 0, tokensRemaining: 0, currentPeriodEnd: new Date().toISOString(),
+        },
+        tokenBalance: data.tokenBalance,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      });
+      navigate("/dashboard");
+    } catch (err: unknown) {
+      const status = (err as { response?: { status?: number; data?: { error?: { code?: string } } } })?.response?.status;
+      const code = (err as { response?: { data?: { error?: { code?: string } } } })?.response?.data?.error?.code;
+      if (status === 401) setServerErr({ kind: "bad" });
+      else if (status === 403 && code === "EMAIL_NOT_VERIFIED") setServerErr({ kind: "unverified" });
+      else if (status === 429) setServerErr({ kind: "rate" });
       else setServerErr({ kind: "generic" });
-    } catch {
-      setServerErr({ kind: "generic" });
     } finally {
       setSubmitting(false);
     }
@@ -160,14 +185,5 @@ const Login = () => {
   );
 };
 
-async function fakeLogin(d: { email: string; password: string; remember: boolean }): Promise<{ status: number; until?: string }> {
-  await new Promise((r) => setTimeout(r, 600));
-  const e = d.email.toLowerCase();
-  if (e === "unverified@test.com") return { status: 403 };
-  if (e === "locked@test.com") return { status: 423, until: "15:42" };
-  if (e === "limit@test.com") return { status: 429 };
-  if (d.password === "Password1") return { status: 200 };
-  return { status: 401 };
-}
 
 export default Login;

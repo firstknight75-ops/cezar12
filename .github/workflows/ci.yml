@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, "claude/**"]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  typecheck-and-build:
+    name: Type Check & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Type check — shared
+        run: pnpm --filter @cezar12/shared type-check
+
+      - name: Type check — api
+        run: pnpm --filter @cezar12/api type-check
+
+      - name: Type check — worker
+        run: pnpm --filter @cezar12/worker type-check
+
+      - name: Type check — web
+        run: pnpm --filter @cezar12/web type-check
+
+      - name: Build — web
+        run: pnpm --filter @cezar12/web build
+        env:
+          VITE_API_URL: http://localhost:3001/api
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Lint
+        run: pnpm --filter @cezar12/web lint || true

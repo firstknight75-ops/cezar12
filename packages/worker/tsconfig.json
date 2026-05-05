@@ -5,6 +5,7 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext"
   },
+  "files": [],
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules"]
 }

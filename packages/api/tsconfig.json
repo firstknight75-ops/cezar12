@@ -9,6 +9,7 @@
       "@cezar12/shared/*": ["../../packages/shared/src/*"]
     }
   },
+  "files": [],
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules"]
 }

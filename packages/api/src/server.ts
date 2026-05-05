@@ -45,7 +45,7 @@ export async function buildServer(): Promise<FastifyInstance> {
 
   await server.register(cors, {
     origin: [
-      process.env.FRONTEND_URL ?? 'http://localhost:3000',
+      process.env.FRONTEND_URL ?? 'http://localhost:8080',
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -53,18 +53,12 @@ export async function buildServer(): Promise<FastifyInstance> {
   });
 
   await server.register(jwt, {
-    secret: {
-      private: Buffer.from(
-        process.env.JWT_PRIVATE_KEY_BASE64 ?? '',
-        'base64'
-      ).toString('utf-8'),
-      public: Buffer.from(
-        process.env.JWT_PUBLIC_KEY_BASE64 ?? '',
-        'base64'
-      ).toString('utf-8'),
-    },
-    sign: { algorithm: 'RS256', expiresIn: '1h' },
-    verify: { algorithms: ['RS256'] },
+    secret: process.env.JWT_SECRET ?? 'dev-secret-change-in-production',
+    sign: { expiresIn: '1h' },
+    formatUser: (payload: { sub: string; role: 'user' | 'admin' | 'support' }) => ({
+      id: payload.sub,
+      role: payload.role,
+    }),
   });
 
   await server.register(rateLimit, {
@@ -192,11 +186,8 @@ export async function buildServer(): Promise<FastifyInstance> {
   });
 
   // ── Register Routes ───────────────────────────────────
-  // TODO: Register route plugins here as they are built
-  // await server.register(authRoutes, { prefix: '/auth' })
-  // await server.register(projectRoutes, { prefix: '/projects' })
-  // await server.register(serviceRoutes, { prefix: '/services' })
-  // await server.register(restaurantRoutes, { prefix: '/restaurant' })
+  const { default: routes } = await import('./routes/index.js');
+  await server.register(routes, { prefix: '/api' });
 
   return server;
 }

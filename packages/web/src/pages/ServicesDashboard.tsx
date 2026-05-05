@@ -2,6 +2,7 @@ import { useState } from "react"
 import {
   BarChart,
   Bar,
+  Cell,
   XAxis,
   YAxis,
   Tooltip,
@@ -147,7 +148,7 @@ function CapacityTab() {
               <ReferenceLine y={c.monthly_fixed_costs} stroke="#ef4444" strokeDasharray="4 3" label={{ value: "Break-even", fontSize: 10, fill: "#ef4444" }} />
               <Bar dataKey="revenue" radius={[2, 2, 0, 0]}>
                 {REVENUE_SCENARIOS.map((s, i) => (
-                  <Bar key={i} dataKey="revenue" fill={s.current ? "#9b2335" : "#e07b39"} />
+                  <Cell key={i} fill={s.current ? "#9b2335" : "#e07b39"} />
                 ))}
               </Bar>
             </BarChart>
@@ -274,7 +275,7 @@ function PipelineTab() {
             <Bar dataKey="value" radius={[0, 2, 2, 0]}>
               {PIPELINE.map((_, i) => {
                 const colors = ["#e07b39", "#c4a882", "#9b6b7a", "#6b4c8a", "#9b2335"]
-                return <Bar key={i} dataKey="value" fill={colors[i]} />
+                return <Cell key={i} fill={colors[i]} />
               })}
             </Bar>
           </BarChart>

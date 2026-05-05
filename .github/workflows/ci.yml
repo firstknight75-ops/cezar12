@@ -24,7 +24,10 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install --ignore-scripts --frozen-lockfile
+        # Do NOT use --ignore-scripts here: esbuild (used by tsup) and other
+        # native modules need their postinstall scripts to run on the CI runner.
+        # (--ignore-scripts is only needed locally due to bcrypt on non-Linux.)
+        run: pnpm install --frozen-lockfile
 
       - name: Build shared (required for type resolution in downstream packages)
         run: pnpm --filter @cezar12/shared build
@@ -63,7 +66,10 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install --ignore-scripts --frozen-lockfile
+        # Do NOT use --ignore-scripts here: esbuild (used by tsup) and other
+        # native modules need their postinstall scripts to run on the CI runner.
+        # (--ignore-scripts is only needed locally due to bcrypt on non-Linux.)
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
         run: pnpm --filter @cezar12/web lint || true

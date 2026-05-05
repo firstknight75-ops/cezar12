@@ -14,6 +14,9 @@ import Plans from "./pages/Plans.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import ProjectCreate from "./pages/ProjectCreate.tsx";
 import RestaurantDashboard from "./pages/RestaurantDashboard.tsx";
+import EcommerceDashboard from "./pages/EcommerceDashboard.tsx";
+import ServicesDashboard from "./pages/ServicesDashboard.tsx";
+import RealEstateDashboard from "./pages/RealEstateDashboard.tsx";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +37,9 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/projects/new" element={<ProjectCreate />} />
           <Route path="/restaurant" element={<RestaurantDashboard />} />
+          <Route path="/ecommerce" element={<EcommerceDashboard />} />
+          <Route path="/services" element={<ServicesDashboard />} />
+          <Route path="/real-estate" element={<RealEstateDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

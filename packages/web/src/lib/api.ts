@@ -3,7 +3,7 @@ import axios, {
   type AxiosError,
   type InternalAxiosRequestConfig,
 } from 'axios';
-import type { ApiErrorResponse, ApiSuccessResponse } from '@cezar12/shared';
+import type { ApiErrorResponse, ApiSuccessResponse } from '@/lib/shared';
 
 // ═══════════════════════════════════════════════════════════
 // AXIOS INSTANCE

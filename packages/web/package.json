@@ -63,7 +63,6 @@
     "@radix-ui/react-switch": "latest",
     "@radix-ui/react-toggle": "latest",
     "@radix-ui/react-toggle-group": "latest",
-    "@cezar12/shared": "workspace:*",
     "@tanstack/query-core": "^5.45.0"
   },
   "devDependencies": {

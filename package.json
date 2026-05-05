@@ -4,8 +4,9 @@
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "scripts": {
-    "dev": "pnpm --filter @cezar12/web run dev",
-    "build": "pnpm --filter @cezar12/web run build",
+    "dev": "cd packages/web && node_modules/.bin/vite --host 0.0.0.0",
+    "build": "cd packages/web && node_modules/.bin/vite build",
+    "build:dev": "cd packages/web && node_modules/.bin/vite build --mode development",
     "test": "turbo test",
     "test:unit": "turbo test:unit",
     "lint": "turbo lint",
@@ -23,13 +24,14 @@
     "docker:clean": "docker-compose down -v"
   },
   "devDependencies": {
-    "turbo": "^2.3.3",
-    "typescript": "^5.8.3",
-    "prettier": "^3.4.2",
+    "@types/node": "^20",
+    "dotenv": "^16.4.0",
     "drizzle-kit": "^0.31.0",
     "drizzle-orm": "^0.31.0",
+    "prettier": "^3.4.2",
     "tsx": "^4.11.0",
-    "dotenv": "^16.4.0"
+    "turbo": "^2.3.3",
+    "typescript": "^5.8.3"
   },
   "engines": {
     "node": ">=20.0.0",

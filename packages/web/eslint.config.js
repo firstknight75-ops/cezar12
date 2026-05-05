@@ -21,6 +21,15 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
+      // @typescript-eslint/eslint-plugin@8 + eslint@8 incompatibility
+      "@typescript-eslint/no-unused-expressions": "off",
+    },
+  },
+  {
+    // shadcn/ui generated files export both components and CVA variants — suppress the warning
+    files: ["src/components/ui/**/*.{ts,tsx}"],
+    rules: {
+      "react-refresh/only-export-components": "off",
     },
   },
 );

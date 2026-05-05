@@ -10,7 +10,6 @@ import {
   jsonb,
   timestamp,
   inet,
-  unique,
   index,
   check,
 } from "drizzle-orm/pg-core";
@@ -172,13 +171,13 @@ export const companies = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (t) => [
-    index("companies_user_id_idx").on(t.userId),
-    check(
+  (t) => ({
+    companiesUserIdIdx: index("companies_user_id_idx").on(t.userId),
+    companiesDigitalPresenceScoreRange: check(
       "companies_digital_presence_score_range",
       sql`${t.digitalPresenceScore} between 0 and 100`
     ),
-  ]
+  })
 );
 
 export const subscriptions = pgTable("subscriptions", {
@@ -222,10 +221,10 @@ export const addonPurchases = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (t) => [
-    index("addon_purchases_sub_id_idx").on(t.subscriptionId),
-    index("addon_purchases_expires_at_idx").on(t.expiresAt),
-  ]
+  (t) => ({
+    addonPurchasesSubIdIdx: index("addon_purchases_sub_id_idx").on(t.subscriptionId),
+    addonPurchasesExpiresAtIdx: index("addon_purchases_expires_at_idx").on(t.expiresAt),
+  })
 );
 
 export const projects = pgTable(
@@ -250,7 +249,9 @@ export const projects = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (t) => [index("projects_user_id_idx").on(t.userId)]
+  (t) => ({
+    projectsUserIdIdx: index("projects_user_id_idx").on(t.userId),
+  })
 );
 
 export const ubo = pgTable(
@@ -270,13 +271,13 @@ export const ubo = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (t) => [
-    index("ubo_project_id_idx").on(t.projectId),
-    check(
+  (t) => ({
+    uboProjectIdIdx: index("ubo_project_id_idx").on(t.projectId),
+    uboFinancialScoreRange: check(
       "ubo_financial_score_range",
       sql`${t.financialScore} between 0 and 100`
     ),
-  ]
+  })
 );
 
 export const tokenTransactions = pgTable(
@@ -298,12 +299,12 @@ export const tokenTransactions = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (t) => [
-    index("token_transactions_user_id_created_at_idx").on(
+  (t) => ({
+    tokenTransactionsUserCreatedIdx: index("token_transactions_user_id_created_at_idx").on(
       t.userId,
       t.createdAt
     ),
-  ]
+  })
 );
 
 export const aiJobs = pgTable(
@@ -326,7 +327,9 @@ export const aiJobs = pgTable(
     approvedAt: timestamp("approved_at", { withTimezone: true }),
     expiresAt: timestamp("expires_at", { withTimezone: true }),
   },
-  (t) => [index("ai_jobs_user_id_status_idx").on(t.userId, t.status)]
+  (t) => ({
+    aiJobsUserStatusIdx: index("ai_jobs_user_id_status_idx").on(t.userId, t.status),
+  })
 );
 
 export const auditLog = pgTable(
@@ -346,7 +349,9 @@ export const auditLog = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (t) => [index("audit_log_created_at_idx").on(t.createdAt)]
+  (t) => ({
+    auditLogCreatedAtIdx: index("audit_log_created_at_idx").on(t.createdAt),
+  })
 );
 
 // ─── Relations ────────────────────────────────────────────────────────────────

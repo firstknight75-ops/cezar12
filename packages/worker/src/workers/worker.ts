@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { Worker, type Job } from 'bullmq';
 import { Redis } from 'ioredis';
-import { createLogger } from './monitoring/logger.js';
+import { createLogger } from '../monitoring/logger.js';
 
 const logger = createLogger('worker');
 
@@ -57,10 +57,6 @@ async function createWorkers(): Promise<void> {
       {
         connection: redis,
         concurrency: config.concurrency,
-        settings: {
-          stalledInterval: 30_000,
-          maxStalledCount: 3,
-        },
         limiter: {
           max: config.concurrency * 2,
           duration: 1000,

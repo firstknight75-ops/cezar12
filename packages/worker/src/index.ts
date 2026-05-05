@@ -5,7 +5,7 @@ import { redis } from "./db/redis.js"
 // Runs every 60s: unlock projects stuck in "producing" > 5 minutes
 
 import { db } from "./db/client.js"
-import { projects } from "@cezar12/shared"
+import { projects } from "@cezar12/shared/db/schema"
 import { eq, and, lt, sql } from "drizzle-orm"
 
 function startStaleLockCron() {
@@ -36,7 +36,7 @@ function startStaleLockCron() {
 // ─── Audit log cleanup cron ───────────────────────────────────────────────────
 // Runs daily at 02:00 UTC: delete audit_log rows older than 180 days
 
-import { auditLog } from "@cezar12/shared"
+import { auditLog } from "@cezar12/shared/db/schema"
 
 function startAuditLogCleanup() {
   const run = async () => {

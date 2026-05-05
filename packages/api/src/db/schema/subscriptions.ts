@@ -10,7 +10,7 @@ import {
   index,
 } from 'drizzle-orm/pg-core';
 import { relations, sql } from 'drizzle-orm';
-import { users } from './users';
+import { users } from './users.js';
 
 // ═══════════════════════════════════════════════════════════
 // ENUMS

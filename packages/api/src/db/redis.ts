@@ -1,4 +1,4 @@
-import Redis from "ioredis"
+import { Redis } from "ioredis"
 
 if (!process.env.REDIS_HOST) {
   throw new Error("REDIS_HOST is required")
@@ -12,6 +12,6 @@ export const redis = new Redis({
   lazyConnect: true,
 })
 
-redis.on("error", (err) => {
+redis.on("error", (err: Error) => {
   console.error("[redis] connection error:", err.message)
 })

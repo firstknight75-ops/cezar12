@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm"
 import { db } from "../db/client.js"
 import { redis } from "../db/redis.js"
 import { aiSemaphore, QUEUE_CONCURRENCY } from "../queues.js"
-import { aiJobs } from "@cezar12/shared"
+import { aiJobs } from "@cezar12/shared/db/schema"
 import type { QueueName, WorkerJobData } from "@cezar12/shared"
 
 // ─── Arabic disclaimer ────────────────────────────────────────────────────────

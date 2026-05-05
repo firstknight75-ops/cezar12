@@ -2,11 +2,16 @@ import type { FastifyPluginAsync, FastifyRequest } from "fastify"
 import fp from "fastify-plugin"
 import jwt from "jsonwebtoken"
 import { db } from "../db/client.js"
-import { auditLog } from "@cezar12/shared"
+import { auditLog } from "@cezar12/shared/db/schema"
+
+declare module "@fastify/jwt" {
+  interface FastifyJWT {
+    user: { id: string; role: "user" | "admin" | "support" }
+  }
+}
 
 declare module "fastify" {
   interface FastifyRequest {
-    user?: { id: string; role: "user" | "admin" | "support" }
     readOnly?: boolean
   }
 }

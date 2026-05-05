@@ -4,9 +4,9 @@
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "scripts": {
-    "dev": "corepack pnpm --filter @cezar12/web exec vite --host 0.0.0.0",
-    "build": "corepack pnpm --filter @cezar12/web exec vite build",
-    "build:dev": "corepack pnpm --filter @cezar12/web exec vite build --mode development",
+    "dev": "packages/web/node_modules/.bin/vite --host 0.0.0.0 --config packages/web/vite.config.ts --root packages/web",
+    "build": "packages/web/node_modules/.bin/vite build --config packages/web/vite.config.ts --root packages/web",
+    "build:dev": "packages/web/node_modules/.bin/vite build --mode development --config packages/web/vite.config.ts --root packages/web",
     "test": "turbo test",
     "test:unit": "turbo test:unit",
     "lint": "turbo lint",

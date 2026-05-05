@@ -522,6 +522,36 @@ export default function Dashboard() {
                     Kitchen View
                   </button>
                 )}
+                {selected.domain === "ECOMMERCE" && (
+                  <button
+                    type="button"
+                    onClick={() => navigate("/ecommerce")}
+                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-sm border border-border hover:border-[hsl(var(--primary)/0.4)] transition-colors text-muted-foreground hover:text-foreground"
+                  >
+                    <TrendingUp className="w-3.5 h-3.5" />
+                    Store View
+                  </button>
+                )}
+                {selected.domain === "SERVICES" && (
+                  <button
+                    type="button"
+                    onClick={() => navigate("/services")}
+                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-sm border border-border hover:border-[hsl(var(--primary)/0.4)] transition-colors text-muted-foreground hover:text-foreground"
+                  >
+                    <TrendingUp className="w-3.5 h-3.5" />
+                    Services View
+                  </button>
+                )}
+                {selected.domain === "REAL_ESTATE" && (
+                  <button
+                    type="button"
+                    onClick={() => navigate("/real-estate")}
+                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-sm border border-border hover:border-[hsl(var(--primary)/0.4)] transition-colors text-muted-foreground hover:text-foreground"
+                  >
+                    <TrendingUp className="w-3.5 h-3.5" />
+                    Property View
+                  </button>
+                )}
               </div>
             </div>
 

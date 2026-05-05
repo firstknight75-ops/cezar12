@@ -4,8 +4,8 @@
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "scripts": {
-    "dev": "pnpm --filter @cezar12/web run dev",
-    "build": "pnpm --filter @cezar12/web run build",
+    "dev": "cd packages/web && node_modules/.bin/vite",
+    "build": "cd packages/web && node_modules/.bin/vite build",
     "test": "turbo test",
     "test:unit": "turbo test:unit",
     "lint": "turbo lint",

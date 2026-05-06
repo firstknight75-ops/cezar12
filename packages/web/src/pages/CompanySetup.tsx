@@ -260,9 +260,3 @@ export default function CompanySetup() {
     </div>
   )
 }
-
-// ── Mock POST ──────────────────────────────────────────────────────────────────
-async function fakePostCompany(_data: SetupData): Promise<void> {
-  await new Promise<void>((res) => setTimeout(res, 800))
-  // In production: await fetch("/api/companies", { method: "POST", body: JSON.stringify(_data) })
-}

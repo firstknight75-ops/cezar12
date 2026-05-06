@@ -17,6 +17,8 @@ import RestaurantDashboard from "./pages/RestaurantDashboard.tsx";
 import EcommerceDashboard from "./pages/EcommerceDashboard.tsx";
 import ServicesDashboard from "./pages/ServicesDashboard.tsx";
 import RealEstateDashboard from "./pages/RealEstateDashboard.tsx";
+import Settings from "./pages/Settings.tsx";
+import ProtectedRoute from "./components/auth/ProtectedRoute.tsx";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +42,14 @@ const App = () => (
           <Route path="/ecommerce" element={<EcommerceDashboard />} />
           <Route path="/services" element={<ServicesDashboard />} />
           <Route path="/real-estate" element={<RealEstateDashboard />} />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            }
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

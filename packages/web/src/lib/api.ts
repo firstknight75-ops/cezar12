@@ -110,3 +110,21 @@ export const tokenApi = {
     return data;
   },
 };
+
+// Back-compat helpers used by existing hooks
+export async function apiGet<T>(url: string): Promise<T> {
+  const { data } = await api.get(url);
+  return (data?.data ?? data) as T;
+}
+export async function apiPost<T>(url: string, body?: unknown): Promise<T> {
+  const { data } = await api.post(url, body);
+  return (data?.data ?? data) as T;
+}
+export async function apiPatch<T>(url: string, body?: unknown): Promise<T> {
+  const { data } = await api.patch(url, body);
+  return (data?.data ?? data) as T;
+}
+export async function apiDelete<T>(url: string): Promise<T> {
+  const { data } = await api.delete(url);
+  return (data?.data ?? data) as T;
+}

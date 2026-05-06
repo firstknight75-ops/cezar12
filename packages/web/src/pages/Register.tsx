@@ -50,19 +50,13 @@ const Register = () => {
     setSubmitting(true);
     setErrors({});
     try {
-      // POST /api/auth/register — mocked
-      const res = await fakeRegister({ fullName, email, password, country, phone });
-      if (res.status === 201) {
-        setSuccess(true);
-      } else if (res.status === 409) {
-        setErrors({ email: i.errEmailTaken });
-      } else if (res.status === 429) {
-        setErrors({ form: i.err429 });
-      } else {
-        setErrors({ form: i.errGeneric });
-      }
-    } catch {
-      setErrors({ form: i.errGeneric });
+      await authApi.register({ fullName, email, password, country, phone });
+      setSuccess(true);
+    } catch (err: unknown) {
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status === 409) setErrors({ email: i.errEmailTaken });
+      else if (status === 429) setErrors({ form: i.err429 });
+      else setErrors({ form: i.errGeneric });
     } finally {
       setSubmitting(false);
     }

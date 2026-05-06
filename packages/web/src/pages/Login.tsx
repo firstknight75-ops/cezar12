@@ -42,18 +42,16 @@ const Login = () => {
     setServerErr(null);
     setResendInfo("");
     try {
-      const res = await fakeLogin({ email, password, remember });
-      if (res.status === 200) {
-        // success — would redirect to dashboard
-        setServerErr(null);
-        setResendInfo(lang === "ar" ? "تم تسجيل الدخول بنجاح ✓" : "Signed in successfully ✓");
-      } else if (res.status === 401) setServerErr({ kind: "bad" });
-      else if (res.status === 403) setServerErr({ kind: "unverified" });
-      else if (res.status === 423) setServerErr({ kind: "locked", until: res.until ?? "15:00" });
-      else if (res.status === 429) setServerErr({ kind: "rate" });
+      await authApi.login({ email, password, remember });
+      navigate("/dashboard");
+    } catch (err: unknown) {
+      const e = err as { response?: { status?: number; data?: { lockedUntil?: string } } };
+      const status = e?.response?.status;
+      if (status === 401) setServerErr({ kind: "bad" });
+      else if (status === 403) setServerErr({ kind: "unverified" });
+      else if (status === 423) setServerErr({ kind: "locked", until: e.response?.data?.lockedUntil ?? "" });
+      else if (status === 429) setServerErr({ kind: "rate" });
       else setServerErr({ kind: "generic" });
-    } catch {
-      setServerErr({ kind: "generic" });
     } finally {
       setSubmitting(false);
     }

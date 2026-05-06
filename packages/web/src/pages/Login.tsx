@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthShell from "@/components/auth/AuthShell";
 import Field, { inputClass } from "@/components/auth/Field";
 import { Lang, t, validEmail } from "@/lib/auth-i18n";
+import { authApi } from "@/lib/api";
 
 type LoginError =
   | { kind: "bad" }

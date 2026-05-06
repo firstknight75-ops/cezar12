@@ -12,6 +12,7 @@ import Step1BasicInfo from "@/components/setup/Step1BasicInfo"
 import Step2DigitalPresence from "@/components/setup/Step2DigitalPresence"
 import Step3BusinessDescription from "@/components/setup/Step3BusinessDescription"
 import Step4MarketingStatus from "@/components/setup/Step4MarketingStatus"
+import { companyApi } from "@/lib/api"
 
 const TOTAL_STEPS = 4
 
@@ -96,10 +97,9 @@ export default function CompanySetup() {
     if (!validateStep(step)) return
     setSubmitting(true)
     try {
-      // POST /api/companies — mocked until backend is wired
-      await fakePostCompany(data)
+      await companyApi.create(data)
       localStorage.removeItem(STORAGE_KEY)
-      navigate("/dashboard")
+      navigate("/plans")
     } catch {
       toast.error(i.errGeneric)
     } finally {
@@ -259,10 +259,4 @@ export default function CompanySetup() {
       </nav>
     </div>
   )
-}
-
-// ── Mock POST ──────────────────────────────────────────────────────────────────
-async function fakePostCompany(_data: SetupData): Promise<void> {
-  await new Promise<void>((res) => setTimeout(res, 800))
-  // In production: await fetch("/api/companies", { method: "POST", body: JSON.stringify(_data) })
 }

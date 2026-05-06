@@ -1,150 +1,130 @@
-import axios, {
-  type AxiosInstance,
-  type AxiosError,
-  type InternalAxiosRequestConfig,
-} from 'axios';
-import type { ApiErrorResponse, ApiSuccessResponse } from '@/lib/shared';
-
-// ═══════════════════════════════════════════════════════════
-// AXIOS INSTANCE
-// ═══════════════════════════════════════════════════════════
+import axios, { type AxiosInstance } from 'axios';
 
 export const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:3001',
-  timeout: 30_000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:3000',
+  withCredentials: true,
+  timeout: 15000,
+  headers: { 'Content-Type': 'application/json' },
 });
 
-// ═══════════════════════════════════════════════════════════
-// REQUEST INTERCEPTOR — Add Auth Token
-// ═══════════════════════════════════════════════════════════
-
-api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('access_token');
-      if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-
-      // Add Request ID
-      config.headers['X-Request-ID'] = crypto.randomUUID();
-    }
-    return config;
-  },
-  (error: AxiosError) => Promise.reject(error)
-);
-
-// ═══════════════════════════════════════════════════════════
-// RESPONSE INTERCEPTOR — Handle Auth Errors
-// ═══════════════════════════════════════════════════════════
-
-let isRefreshing = false;
-let failedQueue: Array<{
-  resolve: (token: string) => void;
-  reject: (error: Error) => void;
-}> = [];
-
-function processQueue(error: Error | null, token: string | null): void {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else if (token) {
-      prom.resolve(token);
-    }
-  });
-  failedQueue = [];
-}
-
 api.interceptors.response.use(
-  (response) => response,
-  async (error: AxiosError<ApiErrorResponse>) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & {
-      _retry?: boolean;
-    };
-
-    // ── Handle 401 — Try Refresh ──────────────────────
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        }).then((token) => {
-          if (originalRequest.headers) {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-          }
-          return api(originalRequest);
-        });
-      }
-
-      originalRequest._retry = true;
-      isRefreshing = true;
-
-      try {
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (!refreshToken) throw new Error('No refresh token');
-
-        const response = await axios.post<
-          ApiSuccessResponse<{ access_token: string; refresh_token: string }>
-        >(`${import.meta.env.VITE_API_URL ?? 'http://localhost:3001'}/auth/refresh`, { refresh_token: refreshToken });
-
-        const { access_token, refresh_token } = response.data.data;
-        localStorage.setItem('access_token', access_token);
-        localStorage.setItem('refresh_token', refresh_token);
-
-        processQueue(null, access_token);
-
-        if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${access_token}`;
-        }
-
-        return api(originalRequest);
-      } catch (refreshError) {
-        processQueue(refreshError as Error, null);
-
-        // Clear auth and redirect to login
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
+  (res) => res,
+  (err) => {
+    const status = err?.response?.status;
+    const url: string = err?.config?.url ?? '';
+    if (status === 401 && !url.includes('/api/auth/login')) {
+      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
         window.location.href = '/login';
-
-        return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
       }
     }
-
-    // ── Handle 422 INSUFFICIENT_TOKENS ────────────────
-    const errorCode = error.response?.data?.error?.code;
-    if (error.response?.status === 422 && errorCode === 'INSUFFICIENT_TOKENS') {
-      window.location.href = '/plans';
-      return Promise.reject(error);
-    }
-
-    return Promise.reject(error);
+    return Promise.reject(err);
   }
 );
 
-// ═══════════════════════════════════════════════════════════
-// TYPED API HELPERS
-// ═══════════════════════════════════════════════════════════
+export type RegisterBody = {
+  fullName: string;
+  email: string;
+  password: string;
+  country: string;
+  phone: string;
+};
 
+export type LoginBody = { email: string; password: string; remember: boolean };
+
+export type AuthUser = { id: string; fullName: string; email: string; plan: string };
+
+export type Project = {
+  id: string;
+  name: string;
+  domain: 'ECOMMERCE' | 'SERVICES' | 'RESTAURANT' | 'REAL_ESTATE';
+  status: string;
+  riskLevel?: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+  score?: number;
+  updatedAt?: string;
+};
+
+export type TokenBalance = {
+  planTokens: number;
+  addonTokens: number;
+  total: number;
+  planType: string;
+};
+
+export type AddonPackage = 'micro' | 'small' | 'medium' | 'large' | 'enterprise';
+
+type SetupData = Record<string, unknown>;
+
+export const authApi = {
+  register: async (body: RegisterBody): Promise<{ userId: string; message: string }> => {
+    const { data } = await api.post('/api/auth/register', body);
+    return data;
+  },
+  login: async (body: LoginBody): Promise<{ user: AuthUser }> => {
+    const { data } = await api.post('/api/auth/login', body);
+    return data;
+  },
+  logout: async (): Promise<void> => {
+    await api.post('/api/auth/logout');
+  },
+  forgotPassword: async (email: string): Promise<void> => {
+    await api.post('/api/auth/forgot-password', { email });
+  },
+  resetPassword: async (body: { token: string; newPassword: string }): Promise<void> => {
+    await api.post('/api/auth/reset-password', body);
+  },
+};
+
+export const companyApi = {
+  create: async (payload: SetupData): Promise<{ companyId: string }> => {
+    const { data } = await api.post('/api/companies', payload);
+    return data;
+  },
+  get: async (): Promise<Record<string, unknown>> => {
+    const { data } = await api.get('/api/companies/me');
+    return data;
+  },
+};
+
+export const projectApi = {
+  list: async (): Promise<Project[]> => {
+    const { data } = await api.get<Project[]>('/api/projects');
+    return data;
+  },
+  create: async (body: {
+    name: string;
+    domain: Project['domain'];
+    domainData: Record<string, unknown>;
+  }): Promise<{ projectId: string; financialResult: unknown }> => {
+    const { data } = await api.post('/api/projects', body);
+    return data;
+  },
+};
+
+export const tokenApi = {
+  getBalance: async (): Promise<TokenBalance> => {
+    const { data } = await api.get<TokenBalance>('/api/tokens/balance');
+    return data;
+  },
+  purchaseAddon: async (packageType: AddonPackage): Promise<{ balance: TokenBalance }> => {
+    const { data } = await api.post('/api/tokens/purchase', { packageType });
+    return data;
+  },
+};
+
+// Back-compat helpers used by existing hooks
 export async function apiGet<T>(url: string): Promise<T> {
-  const response = await api.get<ApiSuccessResponse<T>>(url);
-  return response.data.data;
+  const { data } = await api.get(url);
+  return (data?.data ?? data) as T;
 }
-
-export async function apiPost<T>(url: string, data?: unknown): Promise<T> {
-  const response = await api.post<ApiSuccessResponse<T>>(url, data);
-  return response.data.data;
+export async function apiPost<T>(url: string, body?: unknown): Promise<T> {
+  const { data } = await api.post(url, body);
+  return (data?.data ?? data) as T;
 }
-
-export async function apiPatch<T>(url: string, data?: unknown): Promise<T> {
-  const response = await api.patch<ApiSuccessResponse<T>>(url, data);
-  return response.data.data;
+export async function apiPatch<T>(url: string, body?: unknown): Promise<T> {
+  const { data } = await api.patch(url, body);
+  return (data?.data ?? data) as T;
 }
-
 export async function apiDelete<T>(url: string): Promise<T> {
-  const response = await api.delete<ApiSuccessResponse<T>>(url);
-  return response.data.data;
+  const { data } = await api.delete(url);
+  return (data?.data ?? data) as T;
 }

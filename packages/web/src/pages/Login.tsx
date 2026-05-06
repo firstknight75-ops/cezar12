@@ -3,8 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthShell from "@/components/auth/AuthShell";
 import Field, { inputClass } from "@/components/auth/Field";
 import { Lang, t, validEmail } from "@/lib/auth-i18n";
-import { apiPost } from "@/lib/api";
-import { useAuthStore } from "@/store/useAuthStore";
+import { authApi } from "@/lib/api";
 
 type LoginError =
   | { kind: "bad" }
@@ -14,25 +13,10 @@ type LoginError =
   | { kind: "generic" }
   | null;
 
-interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  user: {
-    id: string; email: string; fullName: string; countryCode: string;
-    currency: string; preferredLang: string; isVerified: boolean; hasCompanyProfile: boolean;
-  };
-  subscription: {
-    id: string; plan: string; billingCycle: string; status: string;
-    tokensPerCycle: number; tokensRemaining: number; currentPeriodEnd: string;
-  } | null;
-  tokenBalance: { plan: number; addon: number; total: number };
-}
-
 const Login = () => {
+  const navigate = useNavigate();
   const [lang, setLang] = useState<Lang>("ar");
   const i = t[lang];
-  const navigate = useNavigate();
-  const setAuth = useAuthStore((s) => s.setAuth);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -58,23 +42,14 @@ const Login = () => {
     setServerErr(null);
     setResendInfo("");
     try {
-      const data = await apiPost<LoginResponse>("/auth/login", { email, password, remember });
-      setAuth({
-        user: data.user,
-        subscription: data.subscription ?? {
-          id: "", plan: "silver" as const, billingCycle: "monthly", status: "active",
-          tokensPerCycle: 0, tokensRemaining: 0, currentPeriodEnd: new Date().toISOString(),
-        },
-        tokenBalance: data.tokenBalance,
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-      });
+      await authApi.login({ email, password, remember });
       navigate("/dashboard");
     } catch (err: unknown) {
-      const status = (err as { response?: { status?: number; data?: { error?: { code?: string } } } })?.response?.status;
-      const code = (err as { response?: { data?: { error?: { code?: string } } } })?.response?.data?.error?.code;
+      const e = err as { response?: { status?: number; data?: { lockedUntil?: string } } };
+      const status = e?.response?.status;
       if (status === 401) setServerErr({ kind: "bad" });
-      else if (status === 403 && code === "EMAIL_NOT_VERIFIED") setServerErr({ kind: "unverified" });
+      else if (status === 403) setServerErr({ kind: "unverified" });
+      else if (status === 423) setServerErr({ kind: "locked", until: e.response?.data?.lockedUntil ?? "" });
       else if (status === 429) setServerErr({ kind: "rate" });
       else setServerErr({ kind: "generic" });
     } finally {
@@ -184,6 +159,5 @@ const Login = () => {
     </AuthShell>
   );
 };
-
 
 export default Login;

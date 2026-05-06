@@ -3,13 +3,8 @@
   "compilerOptions": {
     "outDir": "./dist",
     "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "paths": {
-      "@cezar12/shared": ["../../packages/shared/src/index.ts"],
-      "@cezar12/shared/*": ["../../packages/shared/src/*"]
-    }
+    "moduleResolution": "NodeNext"
   },
-  "files": [],
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules"]
 }

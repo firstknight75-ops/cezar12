@@ -14,9 +14,6 @@ const Plans = lazy(() => import("../pages/Plans"))
 const Dashboard = lazy(() => import("../pages/Dashboard"))
 const ProjectCreate = lazy(() => import("../pages/ProjectCreate"))
 const RestaurantDashboard = lazy(() => import("../pages/RestaurantDashboard"))
-const EcommerceDashboard  = lazy(() => import("../pages/EcommerceDashboard"))
-const ServicesDashboard   = lazy(() => import("../pages/ServicesDashboard"))
-const RealEstateDashboard = lazy(() => import("../pages/RealEstateDashboard"))
 
 export const routes = [
   { path: "/", element: wrap(<Index />) },
@@ -28,9 +25,6 @@ export const routes = [
   { path: "/plans", element: wrap(<Plans />) },
   { path: "/dashboard", element: wrap(<Dashboard />) },
   { path: "/projects/new", element: wrap(<ProjectCreate />) },
-  { path: "/restaurant",  element: wrap(<RestaurantDashboard />) },
-  { path: "/ecommerce",   element: wrap(<EcommerceDashboard />) },
-  { path: "/services",    element: wrap(<ServicesDashboard />) },
-  { path: "/real-estate", element: wrap(<RealEstateDashboard />) },
+  { path: "/restaurant", element: wrap(<RestaurantDashboard />) },
   { path: "*", element: <Navigate to="/404" replace /> },
 ]

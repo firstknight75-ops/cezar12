@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import AuthShell from "@/components/auth/AuthShell";
 import Field, { inputClass } from "@/components/auth/Field";
 import { Lang, countries, passwordStrength, t, validEmail, validPassword } from "@/lib/auth-i18n";
-import { apiPost } from "@/lib/api";
+import { authApi } from "@/lib/api";
 
 const Register = () => {
   const [lang, setLang] = useState<Lang>("ar");
@@ -50,18 +50,13 @@ const Register = () => {
     setSubmitting(true);
     setErrors({});
     try {
-      await apiPost("/auth/register", { fullName, email, password, country, phone });
+      await authApi.register({ fullName, email, password, country, phone });
       setSuccess(true);
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number } })?.response?.status;
-      const code = (err as { response?: { data?: { error?: { code?: string } } } })?.response?.data?.error?.code;
-      if (status === 409 || code === "EMAIL_TAKEN") {
-        setErrors({ email: i.errEmailTaken });
-      } else if (status === 429) {
-        setErrors({ form: i.err429 });
-      } else {
-        setErrors({ form: i.errGeneric });
-      }
+      if (status === 409) setErrors({ email: i.errEmailTaken });
+      else if (status === 429) setErrors({ form: i.err429 });
+      else setErrors({ form: i.errGeneric });
     } finally {
       setSubmitting(false);
     }
@@ -221,6 +216,5 @@ const Register = () => {
     </AuthShell>
   );
 };
-
 
 export default Register;

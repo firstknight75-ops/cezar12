@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,12 +17,6 @@ import RestaurantDashboard from "./pages/RestaurantDashboard.tsx";
 import EcommerceDashboard from "./pages/EcommerceDashboard.tsx";
 import ServicesDashboard from "./pages/ServicesDashboard.tsx";
 import RealEstateDashboard from "./pages/RealEstateDashboard.tsx";
-import AdminLayout from "./pages/admin/AdminLayout.tsx";
-import TenantsPage from "./pages/admin/TenantsPage.tsx";
-import TenantDetailPage from "./pages/admin/TenantDetailPage.tsx";
-import MetricsPage from "./pages/admin/MetricsPage.tsx";
-import FeatureFlagsPage from "./pages/admin/FeatureFlagsPage.tsx";
-import AIControlsPage from "./pages/admin/AIControlsPage.tsx";
 
 const queryClient = new QueryClient();
 
@@ -46,14 +40,6 @@ const App = () => (
           <Route path="/ecommerce" element={<EcommerceDashboard />} />
           <Route path="/services" element={<ServicesDashboard />} />
           <Route path="/real-estate" element={<RealEstateDashboard />} />
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Navigate to="/admin/tenants" replace />} />
-            <Route path="tenants" element={<TenantsPage />} />
-            <Route path="tenants/:id" element={<TenantDetailPage />} />
-            <Route path="metrics" element={<MetricsPage />} />
-            <Route path="feature-flags" element={<FeatureFlagsPage />} />
-            <Route path="ai-controls" element={<AIControlsPage />} />
-          </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

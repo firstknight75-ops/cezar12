@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import AuthShell from "@/components/auth/AuthShell";
 import Field, { inputClass } from "@/components/auth/Field";
 import { Lang, countries, passwordStrength, t, validEmail, validPassword } from "@/lib/auth-i18n";
+import { authApi } from "@/lib/api";
 
 const Register = () => {
   const [lang, setLang] = useState<Lang>("ar");

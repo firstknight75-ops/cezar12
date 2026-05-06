@@ -97,10 +97,9 @@ export default function CompanySetup() {
     if (!validateStep(step)) return
     setSubmitting(true)
     try {
-      // POST /api/companies — mocked until backend is wired
-      await fakePostCompany(data)
+      await companyApi.create(data)
       localStorage.removeItem(STORAGE_KEY)
-      navigate("/dashboard")
+      navigate("/plans")
     } catch {
       toast.error(i.errGeneric)
     } finally {

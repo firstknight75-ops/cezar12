@@ -17,6 +17,7 @@ import { useTokens } from "@/hooks/use-tokens"
 import TokenWidget from "@/components/tokens/TokenWidget"
 import { cn } from "@/lib/utils"
 import { useNavigate } from "react-router-dom"
+import OnboardingWalkthrough from "@/components/OnboardingWalkthrough"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -431,6 +432,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[hsl(var(--background))] font-sans">
+      <OnboardingWalkthrough />
       {/* Top bar */}
       <header className="h-14 border-b border-border bg-card px-6 flex items-center justify-between">
         <div className="flex items-center gap-2">

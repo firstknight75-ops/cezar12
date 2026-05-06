@@ -160,14 +160,4 @@ const Login = () => {
   );
 };
 
-async function fakeLogin(d: { email: string; password: string; remember: boolean }): Promise<{ status: number; until?: string }> {
-  await new Promise((r) => setTimeout(r, 600));
-  const e = d.email.toLowerCase();
-  if (e === "unverified@test.com") return { status: 403 };
-  if (e === "locked@test.com") return { status: 423, until: "15:42" };
-  if (e === "limit@test.com") return { status: 429 };
-  if (d.password === "Password1") return { status: 200 };
-  return { status: 401 };
-}
-
 export default Login;

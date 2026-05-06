@@ -12,6 +12,7 @@ import Step1BasicInfo from "@/components/setup/Step1BasicInfo"
 import Step2DigitalPresence from "@/components/setup/Step2DigitalPresence"
 import Step3BusinessDescription from "@/components/setup/Step3BusinessDescription"
 import Step4MarketingStatus from "@/components/setup/Step4MarketingStatus"
+import { companyApi } from "@/lib/api"
 
 const TOTAL_STEPS = 4
 

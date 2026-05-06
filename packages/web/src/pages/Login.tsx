@@ -14,6 +14,7 @@ type LoginError =
   | null;
 
 const Login = () => {
+  const navigate = useNavigate();
   const [lang, setLang] = useState<Lang>("ar");
   const i = t[lang];
 

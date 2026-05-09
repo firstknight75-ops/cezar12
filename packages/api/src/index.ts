@@ -4,6 +4,8 @@ import helmet from "@fastify/helmet"
 import rateLimit from "@fastify/rate-limit"
 import fp from "fastify-plugin"
 import { authPlugin } from "./plugins/auth.js"
+import { authRoutes } from "./routes/auth.js"
+import { companiesRoutes } from "./routes/companies.js"
 import { projectsRoutes } from "./routes/projects.js"
 import { servicesRoutes } from "./routes/services.js"
 import { tokensRoutes } from "./routes/tokens.js"
@@ -48,6 +50,8 @@ app.addHook("preSerialization", async (_req, _reply, payload) => {
 })
 
 // Routes
+await app.register(fp(authRoutes), { prefix: "/api/auth" })
+await app.register(fp(companiesRoutes), { prefix: "/api/companies" })
 await app.register(fp(projectsRoutes), { prefix: "/api/projects" })
 await app.register(fp(servicesRoutes), { prefix: "/api" })
 await app.register(fp(tokensRoutes), { prefix: "/api/tokens" })

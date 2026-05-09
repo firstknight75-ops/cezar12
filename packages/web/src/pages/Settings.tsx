@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { AlertTriangle, Lock, User as UserIcon } from "lucide-react";
@@ -86,13 +86,37 @@ export default function Settings() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
 
-  // Profile fallback values
-  const profile = {
+  // Profile fetched from API
+  const [profile, setProfile] = useState({
     fullName: user?.fullName ?? "—",
     email: user?.email ?? "—",
     country: user?.countryCode ?? "—",
     phone: (user as { phone?: string } | null)?.phone ?? "—",
-  };
+  });
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await authApi.me();
+        if (cancelled) return;
+        setProfile({
+          fullName: data.fullName ?? "—",
+          email: data.email ?? "—",
+          country: data.country ?? "—",
+          phone: data.phone ?? "—",
+        });
+      } catch {
+        /* keep fallback */
+      } finally {
+        if (!cancelled) setProfileLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Password form
   const [currentPwd, setCurrentPwd] = useState("");
@@ -195,7 +219,11 @@ export default function Settings() {
               <div key={label}>
                 <p className={labelCls}>{label}</p>
                 <div className="h-11 px-3 flex items-center bg-muted/40 border border-border rounded-sm text-sm text-foreground">
-                  {value}
+                  {profileLoading ? (
+                    <span className="inline-block h-3 w-24 bg-muted animate-pulse rounded-sm" />
+                  ) : (
+                    value
+                  )}
                 </div>
               </div>
             ))}

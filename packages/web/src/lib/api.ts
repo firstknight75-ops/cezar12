@@ -54,7 +54,18 @@ export type AddonPackage = 'micro' | 'small' | 'medium' | 'large' | 'enterprise'
 
 type SetupData = Record<string, unknown>;
 
+export type ProfileResponse = {
+  fullName: string;
+  email: string;
+  country: string;
+  phone: string;
+};
+
 export const authApi = {
+  me: async (): Promise<ProfileResponse> => {
+    const { data } = await api.get('/api/auth/me');
+    return data;
+  },
   register: async (body: RegisterBody): Promise<{ userId: string; message: string }> => {
     const { data } = await api.post('/api/auth/register', body);
     return data;

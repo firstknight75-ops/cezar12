@@ -86,13 +86,37 @@ export default function Settings() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
 
-  // Profile fallback values
-  const profile = {
+  // Profile fetched from API
+  const [profile, setProfile] = useState({
     fullName: user?.fullName ?? "—",
     email: user?.email ?? "—",
     country: user?.countryCode ?? "—",
     phone: (user as { phone?: string } | null)?.phone ?? "—",
-  };
+  });
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await authApi.me();
+        if (cancelled) return;
+        setProfile({
+          fullName: data.fullName ?? "—",
+          email: data.email ?? "—",
+          country: data.country ?? "—",
+          phone: data.phone ?? "—",
+        });
+      } catch {
+        /* keep fallback */
+      } finally {
+        if (!cancelled) setProfileLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Password form
   const [currentPwd, setCurrentPwd] = useState("");

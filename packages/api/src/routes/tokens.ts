@@ -6,13 +6,15 @@ import { TokenService } from "../lib/token-service.js"
 import { subscriptions, addonPurchases } from "@cezar12/shared/db/schema"
 
 const PurchaseBody = z.object({
-  packageType: z.enum(["starter", "growth", "scale"]),
+  packageType: z.enum(["micro", "small", "medium", "large", "enterprise"]),
 }).strict()
 
 const ADDON_PACKAGES = {
-  starter: { tokens: 100, price: 49 },
-  growth:  { tokens: 300, price: 129 },
-  scale:   { tokens: 700, price: 249 },
+  micro: { tokens: 200, price: 15 },
+  small: { tokens: 500, price: 35 },
+  medium: { tokens: 1500, price: 99 },
+  large: { tokens: 5000, price: 299 },
+  enterprise: { tokens: 15000, price: 799 },
 }
 
 export const tokensRoutes: FastifyPluginAsync = async (app) => {

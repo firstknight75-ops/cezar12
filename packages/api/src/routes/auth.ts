@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from "fastify"
 import { z } from "zod"
-import bcrypt from "bcrypt"
+import { scryptSync, timingSafeEqual, randomBytes } from "node:crypto"
 import jwt from "jsonwebtoken"
 import { eq, and } from "drizzle-orm"
 import { db } from "../db/client.js"
@@ -30,8 +30,28 @@ const ResetPasswordBody = z.object({
   newPassword: z.string().min(8),
 }).strict()
 
+function jwtSecret() {
+  if (process.env.JWT_SECRET) return process.env.JWT_SECRET
+  if (process.env.NODE_ENV === "production") throw new Error("JWT_SECRET is required")
+  return "cezar12-local-development-secret"
+}
+
+function hashPassword(password: string) {
+  const salt = randomBytes(16).toString("hex")
+  const hash = scryptSync(password, salt, 64).toString("hex")
+  return `scrypt$${salt}$${hash}`
+}
+
+function verifyPassword(password: string, stored: string) {
+  if (!stored.startsWith("scrypt$")) return false
+  const [, salt, hash] = stored.split("$")
+  const expected = Buffer.from(hash, "hex")
+  const actual = scryptSync(password, salt, 64)
+  return expected.length === actual.length && timingSafeEqual(expected, actual)
+}
+
 function signAccessToken(user: { id: string; role: "user" | "admin" | "support" }, remember = false) {
-  return jwt.sign({ sub: user.id, role: user.role }, process.env.JWT_SECRET!, {
+  return jwt.sign({ sub: user.id, role: user.role }, jwtSecret(), {
     expiresIn: remember ? "30d" : "1h",
   })
 }
@@ -56,6 +76,7 @@ async function sessionPayload(userId: string, remember = true) {
       preferredLang: "ar",
       isVerified: user.isVerified,
       hasCompanyProfile: false,
+      phone: user.phone ?? "",
     },
     subscription: sub
       ? {
@@ -92,7 +113,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
   app.get("/me", async (req, reply) => {
     const payload = await sessionPayload(req.user!.id)
     if (!payload) return reply.status(404).send({ error: "User not found" })
-    return reply.send({ data: { ...payload.user, phone: "", country: payload.user.countryCode } })
+    return reply.send({ data: { ...payload.user, country: payload.user.countryCode } })
   })
 
   app.post("/register", { config: { public: true } } as never, async (req, reply) => {
@@ -100,7 +121,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     const [existing] = await db.select({ id: users.id }).from(users).where(eq(users.email, body.email)).limit(1)
     if (existing) return reply.status(409).send({ error: "Email already registered" })
 
-    const passwordHash = await bcrypt.hash(body.password, 12)
+    const passwordHash = hashPassword(body.password)
     const [user] = await db.insert(users).values({
       fullName: body.fullName,
       email: body.email,
@@ -129,7 +150,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
   app.post("/login", { config: { public: true } } as never, async (req, reply) => {
     const body = LoginBody.parse(req.body)
     const [user] = await db.select().from(users).where(eq(users.email, body.email)).limit(1)
-    if (!user || !(await bcrypt.compare(body.password, user.passwordHash))) {
+    if (!user || !verifyPassword(body.password, user.passwordHash)) {
       return reply.status(401).send({ error: "Invalid credentials" })
     }
     await db.update(users).set({ lastLoginAt: new Date() }).where(eq(users.id, user.id))
@@ -147,10 +168,10 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
   app.post("/change-password", async (req, reply) => {
     const body = ChangePasswordBody.parse(req.body)
     const [user] = await db.select().from(users).where(eq(users.id, req.user!.id)).limit(1)
-    if (!user || !(await bcrypt.compare(body.currentPassword, user.passwordHash))) {
+    if (!user || !verifyPassword(body.currentPassword, user.passwordHash)) {
       return reply.status(401).send({ error: "Current password is incorrect" })
     }
-    await db.update(users).set({ passwordHash: await bcrypt.hash(body.newPassword, 12) }).where(eq(users.id, user.id))
+    await db.update(users).set({ passwordHash: hashPassword(body.newPassword) }).where(eq(users.id, user.id))
     return reply.status(204).send()
   })
 

@@ -219,7 +219,11 @@ export default function Settings() {
               <div key={label}>
                 <p className={labelCls}>{label}</p>
                 <div className="h-11 px-3 flex items-center bg-muted/40 border border-border rounded-sm text-sm text-foreground">
-                  {value}
+                  {profileLoading ? (
+                    <span className="inline-block h-3 w-24 bg-muted animate-pulse rounded-sm" />
+                  ) : (
+                    value
+                  )}
                 </div>
               </div>
             ))}

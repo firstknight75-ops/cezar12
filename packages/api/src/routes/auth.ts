@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from "fastify"
 import { z } from "zod"
-import { scryptSync, timingSafeEqual, randomBytes } from "node:crypto"
+import { scryptSync, timingSafeEqual, randomBytes, randomUUID } from "node:crypto"
 import jwt from "jsonwebtoken"
 import { eq, and } from "drizzle-orm"
 import { db } from "../db/client.js"
@@ -105,7 +105,7 @@ async function sessionPayload(userId: string, remember = true) {
       period_end: sub?.currentPeriodEnd.toISOString() ?? new Date().toISOString(),
     },
     accessToken: signAccessToken({ id: user.id, role: user.role }, remember),
-    refreshToken: crypto.randomUUID(),
+    refreshToken: randomUUID(),
   }
 }
 

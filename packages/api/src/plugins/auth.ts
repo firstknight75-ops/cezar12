@@ -20,6 +20,8 @@ export const authPlugin: FastifyPluginAsync = fp(async (app) => {
   app.decorateRequest("user", null)
   app.decorateRequest("readOnly", false)
 
+  const jwtSecret = process.env.JWT_SECRET ?? "cezar12-local-development-secret"
+
   app.addHook("preHandler", async (req, reply) => {
     // Routes marked public skip auth
     if ((req.routeOptions as unknown as { config?: { public?: boolean } }).config?.public) return
@@ -33,7 +35,7 @@ export const authPlugin: FastifyPluginAsync = fp(async (app) => {
     let payload: { sub: string; role: string }
 
     try {
-      payload = jwt.verify(token, process.env.JWT_SECRET!) as typeof payload
+      payload = jwt.verify(token, jwtSecret) as typeof payload
     } catch {
       return reply.status(401).send({ error: "Invalid or expired token" })
     }

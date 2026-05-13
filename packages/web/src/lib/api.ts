@@ -107,6 +107,10 @@ export const authApi = {
     const { data } = await api.get('/api/auth/me');
     return unwrap<ProfileResponse>(data);
   },
+  updateMe: async (body: Partial<Pick<ProfileResponse, 'fullName' | 'phone' | 'country'>>): Promise<ProfileResponse> => {
+    const { data } = await api.patch('/api/auth/me', body);
+    return unwrap<ProfileResponse>(data);
+  },
   register: async (body: RegisterBody): Promise<{ userId: string; message: string }> => {
     const { data } = await api.post('/api/auth/register', body);
     return unwrap<{ userId: string; message: string }>(data);

@@ -14,6 +14,12 @@ const RegisterBody = z.object({
   phone: z.string().min(8).max(50),
 }).strict()
 
+const UpdateMeBody = z.object({
+  fullName: z.string().min(2).max(100).optional(),
+  phone: z.string().min(8).max(50).optional(),
+  country: z.string().min(2).max(100).optional(),
+}).strict()
+
 const LoginBody = z.object({
   email: z.string().email().transform((v) => v.toLowerCase()),
   password: z.string().min(1),
@@ -114,6 +120,29 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     const payload = await sessionPayload(req.user!.id)
     if (!payload) return reply.status(404).send({ error: "User not found" })
     return reply.send({ data: { ...payload.user, country: payload.user.countryCode } })
+  })
+
+  app.patch("/me", async (req, reply) => {
+    const body = UpdateMeBody.parse(req.body)
+    const userId = req.user!.id
+
+    const updates: Partial<typeof users.$inferInsert> = {}
+    if (body.fullName) updates.fullName = body.fullName
+    if (body.phone) updates.phone = body.phone
+    if (body.country) updates.countryCode = body.country
+    updates.updatedAt = new Date()
+
+    const [updated] = await db.update(users).set(updates).where(eq(users.id, userId)).returning()
+    if (!updated) return reply.status(404).send({ error: "User not found" })
+
+    return reply.send({
+      data: {
+        fullName: updated.fullName,
+        email: updated.email,
+        country: updated.countryCode,
+        phone: updated.phone,
+      },
+    })
   })
 
   app.post("/register", { config: { public: true } } as never, async (req, reply) => {

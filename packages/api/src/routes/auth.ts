@@ -122,6 +122,29 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     return reply.send({ data: { ...payload.user, country: payload.user.countryCode } })
   })
 
+  app.patch("/me", async (req, reply) => {
+    const body = UpdateMeBody.parse(req.body)
+    const userId = req.user!.id
+
+    const updates: Partial<typeof users.$inferInsert> = {}
+    if (body.fullName) updates.fullName = body.fullName
+    if (body.phone) updates.phone = body.phone
+    if (body.country) updates.countryCode = body.country
+    updates.updatedAt = new Date()
+
+    const [updated] = await db.update(users).set(updates).where(eq(users.id, userId)).returning()
+    if (!updated) return reply.status(404).send({ error: "User not found" })
+
+    return reply.send({
+      data: {
+        fullName: updated.fullName,
+        email: updated.email,
+        country: updated.countryCode,
+        phone: updated.phone,
+      },
+    })
+  })
+
   app.post("/register", { config: { public: true } } as never, async (req, reply) => {
     const body = RegisterBody.parse(req.body)
     const [existing] = await db.select({ id: users.id }).from(users).where(eq(users.email, body.email)).limit(1)

@@ -15,6 +15,7 @@ interface User {
   preferredLang: string;
   isVerified: boolean;
   hasCompanyProfile: boolean;
+  phone?: string;
 }
 
 interface Subscription {

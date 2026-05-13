@@ -14,6 +14,12 @@ const RegisterBody = z.object({
   phone: z.string().min(8).max(50),
 }).strict()
 
+const UpdateMeBody = z.object({
+  fullName: z.string().min(2).max(100).optional(),
+  phone: z.string().min(8).max(50).optional(),
+  country: z.string().min(2).max(100).optional(),
+}).strict()
+
 const LoginBody = z.object({
   email: z.string().email().transform((v) => v.toLowerCase()),
   password: z.string().min(1),
